@@ -65,3 +65,138 @@ ___
 `TicketFactory` (Interface)
 
 ---
+
+
+## بخش ۲) نمودارهای UML
+
+### ۲-۱) نمودار کلاس برای الگوی State (مدیریت وضعیت Ticket)
+
+```mermaid
+classDiagram
+  
+    class Ticket {
+        -int id
+        -String channel
+        -String type
+        -String request
+        -String response
+        -ITicketState state
+        +getState(): ITicketState
+        +setState(state: ITicketState): void
+    }
+
+    class ITicketState {
+        <<interface>>
+        +handle(ticket: Ticket, policy: TicketTypePolicy): void
+    }
+
+    class NewState {
+        +handle(ticket: Ticket, policy: TicketTypePolicy): void
+    }
+
+    class AssignedState {
+        +handle(ticket: Ticket, policy: TicketTypePolicy): void
+    }
+
+    class InProgressState {
+        +handle(ticket: Ticket, policy: TicketTypePolicy): void
+    }
+
+    class ResolvedState {
+        +handle(ticket: Ticket, policy: TicketTypePolicy): void
+    }
+
+    class ClosedState {
+        +handle(ticket: Ticket, policy: TicketTypePolicy): void
+    }
+
+    Ticket "1" o--> "1" ITicketState
+    ITicketState <|.. NewState
+    ITicketState <|.. AssignedState
+    ITicketState <|.. InProgressState
+    ITicketState <|.. ResolvedState
+    ITicketState <|.. ClosedState
+```
+
+### ۲-۲) نمودار کلاس برای الگوی Strategy (Routing و Response بر اساس type)
+
+```mermaid
+classDiagram
+    class Ticket {
+        -String type
+    }
+
+    class IRoutingStrategy {
+        <<interface>>
+        +route(ticket: Ticket): String
+    }
+
+    class BugRoutingStrategy {
+        +route(ticket: Ticket): String
+    }
+
+    class GenericRoutingStrategy {
+        +route(ticket: Ticket): String
+    }
+
+    class IResponseStrategy {
+        <<interface>>
+        +buildResponse(ticket: Ticket): String
+    }
+
+    class BugResponseStrategy {
+        +buildResponse(ticket: Ticket): String
+    }
+
+    class GenericResponseStrategy {
+        +buildResponse(ticket: Ticket): String
+    }
+
+    class TicketTypePolicy {
+        -IRoutingStrategy routingStrategy
+        -IResponseStrategy responseStrategy
+        +getRoutingStrategy(): IRoutingStrategy
+        +getResponseStrategy(): IResponseStrategy
+    }
+
+    class TicketTypePolicyFactory {
+        +getPolicy(type: String): TicketTypePolicy
+    }
+
+    class TicketService {
+        -TicketTypePolicyFactory policyFactory
+        +handle(ticket: Ticket): void
+    }
+
+    IRoutingStrategy <|.. BugRoutingStrategy
+    IRoutingStrategy <|.. GenericRoutingStrategy
+
+    IResponseStrategy <|.. BugResponseStrategy
+    IResponseStrategy <|.. GenericResponseStrategy
+
+    TicketTypePolicy "1" o--> "1" IRoutingStrategy
+    TicketTypePolicy "1" o--> "1" IResponseStrategy
+
+    TicketService "1" o--> "1" TicketTypePolicyFactory
+    TicketService "1" ..> "1" TicketTypePolicy
+```
+
+### ۲-۳) نمودار کلاس برای Factory کانال ورودی Ticket
+
+```mermaid
+classDiagram
+    class Ticket {
+        -int id
+        -String channel
+        -String type
+        -String request
+    }
+
+    class TicketFactory {
+        +createTicket(id: int, channel: String, type: String, request: String): Ticket
+        -createFromWeb(id: int, type: String, request: String): Ticket
+        -createFromEmail(id: int, type: String, request: String): Ticket
+    }
+
+    TicketFactory "1" ..> "1" Ticket : creates
+```
