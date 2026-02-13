@@ -1,17 +1,22 @@
 package edu.ticket;
 
+import edu.ticket.state.ITicketState;
+import edu.ticket.state.NewState;
+
 public class Ticket {
-    int id;
-    String status = "NEW";
-    String channel;
-    String type;
-    String request;
-    String response;
+    private int id;
+    private String status = "NEW";
+    private String channel;
+    private String type;
+    private String request;
+    private String response;
+    private ITicketState state;
 
     public Ticket(int id,String channel, String type) {
         this.id = id;
         this.channel = channel;
         this.type = type;
+        this.state = new NewState();
     }
 
     public String getStatus() {
@@ -20,6 +25,14 @@ public class Ticket {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public ITicketState getState() {
+        return state;
+    }
+
+    public void setState(ITicketState state) {
+        this.state = state;
     }
 
     public String getChannel() {
