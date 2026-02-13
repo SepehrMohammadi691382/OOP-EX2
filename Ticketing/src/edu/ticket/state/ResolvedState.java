@@ -1,9 +1,10 @@
 package edu.ticket.state;
 
 import edu.ticket.Ticket;
+import edu.ticket.ticketPolicy.TicketTypePolicy;
 
 public class ResolvedState implements ITicketState {
-    public void handle(Ticket ticket) {
+    public void handle(Ticket ticket, TicketTypePolicy policy) {
         System.out.println("Ticket resolved");
 
         ticket.setStatus("CLOSED");
